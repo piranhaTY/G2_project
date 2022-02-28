@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>滷味</title>
+  </head>
+  <form action="/" method="POST">
+    <label>輸入會員ID</label>
+    <input id="input" type="number" name="fname">
+    <button onclick="myFunction()" type="button" >結帳(截圖)</button>
+  </form>
+
+  <body>
+  <div><h3>
+    {{show_qty}}
+    {% include 'time.html' %}
+  </h3></div>
+    <img src="{{ url_for('video_feed') }}" width="35%">
+
+     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+     <script>
+function myFunction() {
+  var name = document.getElementById("input").value;
+  console.log(name);
+  $.post("/takeimage",
+   {
+     name: name
+   },
+   function(data, status){
+     alert("Data: " + data + "\nStatus: " + status);
+
+   });
+}
+</script>
+
+  </body>
+</html>
