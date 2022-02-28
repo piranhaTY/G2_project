@@ -7,7 +7,7 @@ import datetime
 import time
 
 
-def show_num_online():
+def lineorder_qty():
     connection = mysql.connector.connect(host="35.221.178.251",
                                         database="project",
                                         user="root",
@@ -23,7 +23,7 @@ def show_num_online():
 
 if __name__ == '__main__':
     while True:
-        print(show_num_online())
+        print(lineorder_qty())
 
 
 

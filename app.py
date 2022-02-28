@@ -2,7 +2,7 @@ from flask import Flask, render_template, Response, request
 import cv2
 import datetime
 import time
-from caculate import sql_order
+from lineorder_qty import lineorder_qty
 
 
 
@@ -49,8 +49,8 @@ def video_feed():
 
 @app.route('/', methods=["GET", "POST"])
 def index():
-
-    return render_template('index.html', show_qty = "LINE訂單數量")
+    lineorder_qty()
+    return render_template('index.html', show_qty = lineorder_qty())
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
