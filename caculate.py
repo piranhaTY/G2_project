@@ -25,7 +25,6 @@ def sql_order():
 
 def caculate():
     total_price = 0
-    print(sql_order())
     for i in sql_order():
         total_price += i[5]
         result = "".join(f"{i[-1].ljust(10,'－')}{str(i[4]).rjust(2)}個 ${str(i[5]).rjust(3)}\n" for i in sql_order())

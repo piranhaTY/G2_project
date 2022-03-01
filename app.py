@@ -5,16 +5,45 @@ import time
 from lineorder_qty import lineorder_qty
 
 
-
-
 app = Flask(__name__)
 camera = cv2.VideoCapture(0)
 
 now = datetime.datetime.today().strftime("%Y-%m-%d_%H%M%S")
 
+
+
+import mysql.connector
+import datetime
+import time
+
+
+@app.route('/caculate', methods=["GET", "POST"])
+def caculate():
+    connection = mysql.connector.connect(host="35.221.178.251",
+                                         database="project",
+                                         user="root",
+                                         password="cfi10202")
+    mycursor = connection.cursor()
+    mycursor.execute("SELECT d.orders_id, d.users_id, d.products_id, d.date, count(*) as qty, "
+                     "sum(p.price) as total_price, sum(p.`heat(kcal)`) as total_heat, p.products_name "
+                     "FROM project.detection_test d "
+                     "JOIN project.products p on d.products_id = p.products_id "
+                     "GROUP BY orders_id, d.users_id, d.date, products_id")
+    order_list = mycursor.fetchall()
+    mycursor.close()
+    connection.close()
+    total_price = 0
+    for i in order_list:
+        total_price += i[5]
+        result = "".join(f"{i[-1].ljust(10,'－')}{str(i[4]).rjust(2)}個 ${str(i[5]).rjust(3)}\n" for i in order_list)
+        print(f"{i[-1].ljust(10,'－')}{str(i[4]).rjust(2)}個 ${str(i[5]).rjust(3)}")
+    #####   總金額欄位   #####
+    print(f"總金額:{total_price}")
+    return render_template('index.html', total_price = total_price, result = result)
+
+
 @app.route('/takeimage', methods = ['POST'])
 def takeimage():
-    global  users_id
     users_id = request.form['name']    #從Flask帶入users_id
     print(f"{users_id}({now})")
     _, frame = camera.read()
@@ -23,6 +52,8 @@ def takeimage():
     cv2.imwrite(f"./image/{users_id}({now}.jpg", frame)
     # cv2.imshow(f"./image/{c_id}({now}.jpg", frame)
     # camera.release()
+    time.sleep(2)
+    caculate()
     return Response(status = 200)
 
 def gen_frames():
@@ -51,6 +82,7 @@ def video_feed():
 def index():
     lineorder_qty()
     return render_template('index.html', show_qty = lineorder_qty())
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

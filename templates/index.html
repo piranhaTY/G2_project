@@ -1,11 +1,12 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <meta charset="UTF-8">
     <title>滷味</title>
   </head>
   <form action="/" method="POST">
     <label>輸入會員ID</label>
-    <input id="input" type="number" name="fname">
+    <input id="input_id" type="number" name="fname">
     <button onclick="myFunction()" type="button" >結帳(截圖)</button>
   </form>
 
@@ -19,18 +20,16 @@
      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
      <script>
 function myFunction() {
-  var name = document.getElementById("input").value;
+  var name = document.getElementById("input_id").value;
   console.log(name);
   $.post("/takeimage",
    {
      name: name
    },
-   function(data, status){
-     alert("Data: " + data + "\nStatus: " + status);
-
-   });
+   );
 }
 </script>
-
+  <div>總金額{{total_price}}<br>
+    {{result}}</div>
   </body>
 </html>
