@@ -8,7 +8,7 @@
 
   <body>
 
-  <div id=""here><h2>總金額 : {{total_price0}} </h2>
+  <div id="here"><h2>總金額 : {{total_price0}} </h2>
     {% for i in result %}
     <h3>{{i}}</h3>
     {% endfor %}
@@ -22,7 +22,7 @@
 function myFunction2() {
   $.post("/commit_order"
    );
-  $("check_commit").load("/commit_order")
+  $("#check_commit").load("/commit_order")
 }
 
     </script>
