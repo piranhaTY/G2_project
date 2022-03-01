@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
+   <meta charset="UTF-8">
     <title>滷味</title>
   </head>
   <form action="/" method="POST">
@@ -11,10 +11,11 @@
   </form>
 
   <body>
-  <div><h3>
-    {{show_qty}}
-    {% include 'time.html' %}
-  </h3></div>
+  <div id="reload_qty"><h3> {{show_qty}} </h3></div>
+
+
+
+  <div> {% include 'time.html' %} </div>
     <img src="{{ url_for('video_feed') }}" width="35%">
 
      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
@@ -27,9 +28,14 @@ function myFunction() {
      name: name
    },
    );
+   $("#show_result").load("/caculate")
+
 }
+
 </script>
-  <div>總金額{{total_price}}<br>
-    {{result}}</div>
+
+  <div id="show_result" ><h1> </h1></div>
+
+
   </body>
 </html>

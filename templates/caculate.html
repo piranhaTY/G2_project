@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>滷味</title>
+  </head>
+
+
+  <body>
+
+  <div id=""here><h2>總金額 : {{total_price0}} </h2>
+    {% for i in result %}
+    <h3>{{i}}</h3>
+    {% endfor %}
+
+    <div id="check_commit">
+      <button onclick="myFunction2()" type="button" >確認</button>
+    </div>
+  </div>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+    <script>
+function myFunction2() {
+  $.post("/commit_order"
+   );
+  $("check_commit").load("/commit_order")
+}
+
+    </script>
+
+  </body>
+</html>

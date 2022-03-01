@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <title>滷味</title>
+  </head>
+  <form action="/" method="POST">
+    <label>輸入會員ID</label>
+    <input id="input_id" type="number" name="fname">
+    <button onclick="myFunction()" type="button" >結帳(截圖)</button>
+  </form>
+
+  <body>
+  <div><h3>
+    {{show_qty}}
+    {% include 'time.html' %}
+  </h3></div>
+    <img src="{{ url_for('video_feed') }}" width="35%">
+
+     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+     <script>
+function myFunction() {
+  var name = document.getElementById("input_id").value;
+  console.log(name);
+  $.post("/takeimage",
+   {
+     name: name
+   },
+   );
+}
+</script>
+  </body>
+<table class="body-wrap">
+    <tbody><tr>
+        <td></td>
+        <td class="container" width="600">
+            <div class="content">
+                <table class="main" width="100%" cellpadding="0" cellspacing="0">
+                    <tbody><tr>
+                        <td class="content-wrap aligncenter">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tbody><tr>
+                                    <td class="content-block">
+                                        <h2>感謝您的購買</h2>
+                                        <h4>以下為您的收據</h4>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="content-block">
+                                        <table class="invoice">
+                                            <tbody><tr>
+                                                <td>Anna Smith<br>Invoice #12345<br>June 01 2015</td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <table class="invoice-items" cellpadding="0" cellspacing="0">
+                                                        <tbody><tr>
+                                                            {% for items in order_list %}
+                                                                {% for item in items %}
+                                                                <td>{{item[-2]}}{{item[-1]}}</td>
+                                                                <td class="alignright">{{item[-6]}}{{item[-5]}}</td>
+                                                                {% endfor %}
+                                                            {% endfor %}
+                                                        </tr>
+                                                        <tr class="total">
+                                                            <td class="alignright" width="80%">Total</td>
+                                                            <td class="alignright">{{order_list}}</td>
+                                                        </tr>
+                                                    </tbody></table>
+                                                </td>
+                                            </tr>
+                                        </tbody></table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="content-block">
+                                        <a href="#">View in browser</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="content-block">
+                                        Company Inc. 123 Van Ness, San Francisco 94102
+                                    </td>
+                                </tr>
+                            </tbody></table>
+                        </td>
+                    </tr>
+                </tbody></table>
+                <div class="footer">
+                    <table width="100%">
+                        <tbody><tr>
+                            <td class="aligncenter content-block">Questions? Email <a href="mailto:">support@company.inc</a></td>
+                        </tr>
+                    </tbody></table>
+                </div></div>
+        </td>
+        <td></td>
+    </tr>
+</tbody></table>
+</html>

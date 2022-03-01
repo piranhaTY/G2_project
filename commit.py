@@ -18,7 +18,6 @@ def commit_order():
                    "VALUES (%s, %s, %s, %s, %s, %s)")
 
     for i in sql_order():
-        # data_details = i[1:-1]  #MySQL detection_test的date格式有誤
         now = datetime.datetime.today()
         data_details = (i[1], i[2], now, i[4], i[5], i[6])
         print(data_details)
@@ -26,7 +25,7 @@ def commit_order():
         delete_detection = (f"DELETE FROM detection_test WHERE users_id = '{i[1]}'")
         print(delete_detection)
         mycursor.execute(delete_detection)
-    connection.commit()
+    # connection.commit()
     mycursor.close()
     connection.close()
 

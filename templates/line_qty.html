@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>讀取文件內容</title>
+
+</head>
+
+<body>
+
+<div id="textarea"></div>
+
+<script type="javascript">
+
+var fso, ts, s ;
+
+var ForReading = 1;
+
+fso = new ActiveXObject("Scripting.FileSystemObject");
+
+ts = fso.OpenTextFile("C:\Python_CFI102\flask_owmer\templates\line_qty.txt", ForReading);
+
+s = ts.ReadLine();
+
+document.getElementById("textarea").innerHTML=s;
+
+</script>
+
+</body>
+
+</html>

@@ -1,50 +1,71 @@
-from flask import Flask, render_template, Response, request
+from flask import Flask, render_template, Response, request, redirect
 import cv2
+import mysql.connector
 import datetime
 import time
 from lineorder_qty import lineorder_qty
+from caculate import sql_order
 
 
 app = Flask(__name__)
 camera = cv2.VideoCapture(0)
 
-now = datetime.datetime.today().strftime("%Y-%m-%d_%H%M%S")
 
 
 
-import mysql.connector
-import datetime
-import time
+@app.route('/commit_order', methods = ["POST"])
+def commit_order():
+    try:
+        connection = mysql.connector.connect(host="35.221.178.251",
+                                             database="project",
+                                             user="root",
+                                             password="cfi10202")
+        mycursor = connection.cursor()
+
+        add_details = ("INSERT INTO details "
+                       "(users_id, products_id, date, quantity, price, details_cal) "
+                       "VALUES (%s, %s, %s, %s, %s, %s)")
+
+        for i in sql_order():
+            # data_details = i[1:-1]  #MySQL detection_test的date格式有誤
+            now = datetime.datetime.today()
+            data_details = (i[1], i[2], now, i[4], i[5], i[6])
+            print(data_details)
+            mycursor.execute(add_details, data_details)
+            delete_detection = (f"DELETE FROM detection_test WHERE users_id = '{i[1]}'")
+            print(delete_detection)
+            mycursor.execute(delete_detection)
+    except mysql.connector.errors.ProgrammingError as er_name:
+        check = f"錯誤\n{er_name}"
+    else:
+        check = "Commit!"
+    finally:
+        print(check)
+        # connection.commit()
+        mycursor.close()
+        connection.close()
+    return render_template('index.html', check = check)
 
 
 @app.route('/caculate', methods=["GET", "POST"])
 def caculate():
-    connection = mysql.connector.connect(host="35.221.178.251",
-                                         database="project",
-                                         user="root",
-                                         password="cfi10202")
-    mycursor = connection.cursor()
-    mycursor.execute("SELECT d.orders_id, d.users_id, d.products_id, d.date, count(*) as qty, "
-                     "sum(p.price) as total_price, sum(p.`heat(kcal)`) as total_heat, p.products_name "
-                     "FROM project.detection_test d "
-                     "JOIN project.products p on d.products_id = p.products_id "
-                     "GROUP BY orders_id, d.users_id, d.date, products_id")
-    order_list = mycursor.fetchall()
-    mycursor.close()
-    connection.close()
+    order_list = sql_order()
     total_price = 0
+    result = list()
     for i in order_list:
         total_price += i[5]
-        result = "".join(f"{i[-1].ljust(10,'－')}{str(i[4]).rjust(2)}個 ${str(i[5]).rjust(3)}\n" for i in order_list)
-        print(f"{i[-1].ljust(10,'－')}{str(i[4]).rjust(2)}個 ${str(i[5]).rjust(3)}")
+        result.append(f"{i[-1].ljust(10,'－')}{str(i[4]).rjust(2)}個 ${str(i[5]).rjust(3)}")
+    print("============")
+    print(result)
     #####   總金額欄位   #####
     print(f"總金額:{total_price}")
-    return render_template('index.html', total_price = total_price, result = result)
+    return render_template('caculate.html', total_price0 = total_price, result=result)
 
 
-@app.route('/takeimage', methods = ['POST'])
+@app.route('/takeimage', methods = ["GET", "POST"])
 def takeimage():
     users_id = request.form['name']    #從Flask帶入users_id
+    now = datetime.datetime.today().strftime("%Y-%m-%d_%H%M%S")
     print(f"{users_id}({now})")
     _, frame = camera.read()
     h, w, c = frame.shape
@@ -54,7 +75,8 @@ def takeimage():
     # camera.release()
     time.sleep(2)
     caculate()
-    return Response(status = 200)
+    return render_template('index.html')
+
 
 def gen_frames():
     while True:
@@ -81,7 +103,7 @@ def video_feed():
 @app.route('/', methods=["GET", "POST"])
 def index():
     lineorder_qty()
-    return render_template('index.html', show_qty = lineorder_qty())
+    return render_template('index.html', show_qty=lineorder_qty())
 
 
 if __name__ == '__main__':
