@@ -41,7 +41,7 @@ def commit_order():
         check = "Commit!"
     finally:
         print(check)
-        # connection.commit()
+        connection.commit()
         mycursor.close()
         connection.close()
     return render_template('commit.html', check = check)
