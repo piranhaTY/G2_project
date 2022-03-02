@@ -19,7 +19,7 @@ def commit_order():
 
     for i in sql_order():
         now = datetime.datetime.today()
-        data_details = (i[1], i[2], now, i[4], i[5], i[6])
+        data_details = (i[1:-1])
         print(data_details)
         mycursor.execute(add_details, data_details)
         delete_detection = (f"DELETE FROM detection_test WHERE users_id = '{i[1]}'")

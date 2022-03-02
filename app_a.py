@@ -85,7 +85,7 @@ def video_feed():
 @app.route('/', methods=["GET", "POST"])
 def index():
     lineorder_qty()
-    return render_template('index.html', show_qty = lineorder_qty())
+    return render_template('index_a.html', show_qty = lineorder_qty())
 
 
 if __name__ == '__main__':

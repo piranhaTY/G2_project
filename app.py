@@ -13,7 +13,7 @@ camera = cv2.VideoCapture(0)
 
 
 
-@app.route('/commit_order', methods = ["POST"])
+@app.route('/commit_order', methods = ["GET", "POST"])
 def commit_order():
     try:
         connection = mysql.connector.connect(host="35.221.178.251",
@@ -29,22 +29,22 @@ def commit_order():
         for i in sql_order():
             # data_details = i[1:-1]  #MySQL detection_test的date格式有誤
             now = datetime.datetime.today()
-            data_details = (i[1], i[2], now, i[4], i[5], i[6])
+            data_details = (i[1:-1])
             print(data_details)
             mycursor.execute(add_details, data_details)
             delete_detection = (f"DELETE FROM detection_test WHERE users_id = '{i[1]}'")
             print(delete_detection)
             mycursor.execute(delete_detection)
-    except mysql.connector.errors.ProgrammingError as er_name:
+    except mysql.connector.errors as er_name:
         check = f"錯誤\n{er_name}"
     else:
         check = "Commit!"
     finally:
         print(check)
-        connection.commit()
+        # connection.commit()
         mycursor.close()
         connection.close()
-    return render_template('index.html', check = check)
+    return render_template('commit.html', check = check)
 
 
 @app.route('/caculate', methods=["GET", "POST"])

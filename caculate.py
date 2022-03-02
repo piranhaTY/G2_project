@@ -34,6 +34,7 @@ def caculate():
     return total_price, result
 
 if __name__ == "__main__":
+    print(sql_order())
     now = datetime.datetime.today()         ## 間隔1秒，預留辨識及寫入資料時間
     print(f"---------{now}按下 (結帳) 鍵")    ## 間隔1秒，預留辨識及寫入資料時間
     #####   辨識結果欄位   #####

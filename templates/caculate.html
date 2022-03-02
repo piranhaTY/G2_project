@@ -19,11 +19,16 @@
   </div>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
     <script>
-function myFunction2() {
-  $.post("/commit_order"
-   );
+function myFunction2()
+{
+  $.post("/commit_order");
   $("#check_commit").load("/commit_order")
-}
+};
+
+<!--setTimeout(function()-->
+<!--{  if (document.getElementById("check_commit").value = "Commit!") { location.reload(); }-->
+<!--  else { window.alert("接單失敗，請再試一次");}, 2000)-->
+<!--}-->
 
     </script>
 
