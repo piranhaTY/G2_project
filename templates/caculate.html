@@ -23,14 +23,8 @@ function myFunction2()
 {
   $.post("/commit_order");
   $("#check_commit").load("/commit_order")
-function Refresh(){
-if (document.getElementById("check_commit").value == "Commit!"){
-  window.location.reload();
-}else{
-  window.alert("接單失敗，請再試一次");
-}
-}
-setTimeout('Refresh()',2000);
+
+setTimeout('Refresh()',1000);
 };
 
 

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Line訂單</title>
+</head>
+<body>
+<input type ="button" onclick="javascript:location.href='/ '" value="回到結帳頁面"></input>
+<br>
+<img src="static/line.png" width="50" height="50">
+<h3>線上訂單</h3>
+
+    {% for i in id %}
+        <table style="border: 2px solid rgb(212, 140, 6);background-color:calc()">
+            <tr>
+                <th>會員ID</th>
+                <th>購物車</th>
+                <th>總金額</th>
+                <th>接單</th>
+                <th>完成訂單</th>
+            </tr>
+            <tr>
+                <td id="accept_id" width="100px" align="center"><h2>{{i}}</h2></td>
+                <td width="250px" align="center">
+                    {% for l in order[i]["清單"] %}
+                    {{l}}<br>
+                    {% endfor %}
+                </td>
+                <td width="150px" align="center"><h2>{{order[i]["總金額"]}}</h2></td>
+                <td width="100px" align="center">{{order[i]["接單"]}} <br>
+                    <button onclick="line_accept()" type="button" >接單</button>
+                </td>
+                <td width="100px" align="center"><button onclick="line_commit()" type="button" >完成</button></td>
+
+            </tr>
+        </table>
+    {% endfor %}
+
+</body>
+
+<script>
+function line_accept() {
+  var a_id = document.getElementById("accept_id").value;
+  console.log(a_id);
+  $.post("/lineaccept",
+   {
+     a_id: a_id
+   },
+   );
+
+
+}
+
+</script>
+</html>

@@ -10,7 +10,50 @@ from caculate import sql_order
 app = Flask(__name__)
 camera = cv2.VideoCapture(0)
 
+@app.route('/lineaccept', methods=["GET", "POST"])
+def line_accept():
+    accept_id = request.form['a_id']
+    print(accept_id)
+    return render_template('lineorder.html')
 
+
+
+@app.route('/lineorder', methods=["GET", "POST"])
+def line_order():
+    connection = mysql.connector.connect(host="35.221.178.251",
+                                        database="project",
+                                        user="root",
+                                        password="cfi10202")
+    mycursor = connection.cursor()
+    mycursor.execute("SELECT u.users_id, p.products_id, now() as date, sum(l.quantity) as QTYs, "
+                    "sum(l.quantity*p.price) as total_price, sum(l.quantity*p.`heat(kcal)`) as total_heat, l.products_name, l.accept "
+                    "FROM linebot_test l JOIN users u ON l.line_id = u.line_id "
+                    "JOIN products p ON p.products_name = l.products_name "
+                    "GROUP BY u.users_id, p.products_id, l.accept")
+    line_order_list = mycursor.fetchall()
+    mycursor.close()
+    connection.close()
+    id = set()
+    for n in range(len(line_order_list)):
+        id.add(line_order_list[n][0])
+    id = list(id)
+    order = dict()
+    for U in id:
+        order[U] = dict()
+        text = list()
+        price = 0
+        accpet = 0
+        for L in line_order_list:
+            if L[0] == U:
+                text.append(f"{L[6].ljust(6, '－')}{str(L[3]).rjust(2,'－')}個 ${str(L[4]).rjust(3,' ')}")
+                price += L[4]
+                accpet += L[7]
+            order[U]['清單'] = text
+            order[U]['總金額'] = int(price)
+            order[U]['接單'] = "待接單" if accpet == 0 else "OK"
+
+
+    return render_template('lineorder.html',id = id, order = order)
 
 
 @app.route('/commit_order', methods = ["GET", "POST"])
@@ -27,16 +70,14 @@ def commit_order():
                        "VALUES (%s, %s, %s, %s, %s, %s)")
 
         for i in sql_order():
-            # data_details = i[1:-1]  #MySQL detection_test的date格式有誤
-            now = datetime.datetime.today()
             data_details = (i[1:-1])
             print(data_details)
             mycursor.execute(add_details, data_details)
             delete_detection = (f"DELETE FROM detection_test WHERE users_id = '{i[1]}'")
             print(delete_detection)
             mycursor.execute(delete_detection)
-    except mysql.connector.errors as er_name:
-        check = f"錯誤\n{er_name}"
+    except Exception as err_type :
+        check = f"錯誤\n{err_type}"
     else:
         check = "Commit!"
     finally:
@@ -71,7 +112,7 @@ def takeimage():
     h, w, c = frame.shape
     frame = frame[0:h, int(w / 2 - h / 2):int(w / 2 + h / 2)]
     cv2.imwrite(f"./image/{users_id}({now}.jpg", frame)
-    # cv2.imshow(f"./image/{c_id}({now}.jpg", frame)
+    # cv2.imshow(f"./image/{users_id}({now}.jpg", frame)
     # camera.release()
     time.sleep(2)
     caculate()

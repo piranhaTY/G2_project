@@ -16,12 +16,7 @@ def lineorder_qty():
     num_online = "SELECT count(DISTINCT line_id) FROM linebot_test"
     mycursor.execute(num_online)
     num_online = mycursor.fetchall()[0][0]
-    now = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
-    show_online = f"目前新增{num_online}筆線上訂餐--{now}"
-    line_qty = open("templates/line.html", "w")
-    text = str(num_online)+"_"+str(now)
-    line_qty.write(show_online)
-    line_qty.close()
+    show_online = f"目前新增{num_online}筆線上訂餐"
     time.sleep(5)
     return show_online
 
