@@ -4,7 +4,7 @@
 import mysql.connector
 import datetime
 import time
-from caculate import sql_order
+from calculate import sql_order
 
 def commit_order():
     connection = mysql.connector.connect(host="35.221.178.251",

@@ -4,11 +4,12 @@ import mysql.connector
 import datetime
 import time
 from lineorder_qty import lineorder_qty
-from caculate import sql_order
+from calculate import sql_order
 
 
 app = Flask(__name__)
 camera = cv2.VideoCapture(0)
+
 
 @app.route('/lineaccept', methods=["GET", "POST"])
 def line_accept():
@@ -55,6 +56,31 @@ def line_order():
 
     return render_template('lineorder.html',id = id, order = order)
 
+@app.route('/cancel_order', methods = ["GET", "POST"])
+def cancel_order():
+    try:
+        connection = mysql.connector.connect(host="35.221.178.251",
+                                             database="project",
+                                             user="root",
+                                             password="cfi10202")
+        mycursor = connection.cursor()
+        for i in sql_order():
+            delete_detection = (f"DELETE FROM detection_test WHERE users_id = '{i[1]}'")
+            print(delete_detection)
+            mycursor.execute(delete_detection)
+    except Exception as err_type :
+        check_x = f"錯誤\n{err_type}"
+    else:
+        check_x = "取消"
+    finally:
+        print(check_x)
+        connection.commit()
+        mycursor.close()
+        connection.close()
+    return render_template('cancel.html', check_x=check_x)
+
+
+
 
 @app.route('/commit_order', methods = ["GET", "POST"])
 def commit_order():
@@ -70,10 +96,12 @@ def commit_order():
                        "VALUES (%s, %s, %s, %s, %s, %s)")
 
         for i in sql_order():
-            data_details = (i[1:-1])
-            print(data_details)
-            mycursor.execute(add_details, data_details)
-            delete_detection = (f"DELETE FROM detection_test WHERE users_id = '{i[1]}'")
+            add_details = (f"INSERT INTO details "
+                           f"(users_id, products_id, date, quantity, price, details_cal) "
+                           f"VALUES ({i[1]}, {i[2]}, '{i[3]}', {i[4]}, {i[5]}, {i[6]})")
+            print(add_details)
+            mycursor.execute(add_details)
+            delete_detection = (f"DELETE FROM detection_test WHERE users_id = {i[1]}  and products_id = {i[2]}")
             print(delete_detection)
             mycursor.execute(delete_detection)
     except Exception as err_type :
@@ -85,11 +113,11 @@ def commit_order():
         connection.commit()
         mycursor.close()
         connection.close()
-    return render_template('commit.html', check = check)
+    return render_template('commit.html', check=check)
 
 
-@app.route('/caculate', methods=["GET", "POST"])
-def caculate():
+@app.route('/calculate', methods=["GET", "POST"])
+def calculate():
     order_list = sql_order()
     total_price = 0
     result = list()
@@ -100,7 +128,7 @@ def caculate():
     print(result)
     #####   總金額欄位   #####
     print(f"總金額:{total_price}")
-    return render_template('caculate.html', total_price0 = total_price, result=result)
+    return render_template('calculate.html', total_price0 = total_price, result=result)
 
 
 @app.route('/takeimage', methods = ["GET", "POST"])
@@ -115,7 +143,7 @@ def takeimage():
     # cv2.imshow(f"./image/{users_id}({now}.jpg", frame)
     # camera.release()
     time.sleep(2)
-    caculate()
+    calculate()
     return render_template('index.html')
 
 

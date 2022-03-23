@@ -14,10 +14,11 @@
     {% endfor %}
 
     <div id="check_commit">
-      <button onclick="myFunction2()" type="button" >確認</button>
+      <button onclick="myFunction2()" type="button" ><img src="static/ok.png" width="50" height="50"></button>
+      <button onclick="myFunction3()" type="button" ><img src="static/cancel.png" width="50" height="50"></button>
     </div>
   </div>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+
     <script>
 function myFunction2()
 {
@@ -26,8 +27,15 @@ function myFunction2()
 
 setTimeout('Refresh()',1000);
 };
+    </script>
+    <script>
+function myFunction3()
+{
+  $.post("/cancel_order");
+  $("#check_commit").load("/cancel_order")
 
-
+setTimeout('Refresh()',1000);
+};
     </script>
 
   </body>
